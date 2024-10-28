@@ -10,11 +10,11 @@
 #SBATCH --error=log/slurm_output/error_%J.out
 
 # Set the path to save checkpoints
-OUTPUT_DIR='/home/aabdujyo/scratch/VideoMAE/checkpoints/'$1
+OUTPUT_DIR='/home/aabdujyo/scratch/VideoBoxPretraining/checkpoints/'$1
 # path to Kinetics set (train.csv/val.csv/test.csv)
-LOG_DIR='/home/aabdujyo/scratch/VideoMAE/log/'$1
+LOG_DIR='/home/aabdujyo/scratch/VideoBoxPretraining/log/'$1
 # path to pretrain model
-VID_ENCODER_PATH='/home/aabdujyo/scratch/VideoMAE/VideoMAE_pretrained_ckpts/checkpoint_ViT-B_SS_ep2400.pth'
+VID_ENCODER_PATH='/home/aabdujyo/scratch/VideoBoxPretraining/VideoMAE_pretrained_ckpts/checkpoint_ViT-B_SS_ep2400.pth'
 BOX_ENCODER_PATH='/home/aabdujyo/scratch/activity_moma/saved_models/H4_L3_D256_LR0001v2/bbox2activity_best.pt'
 
 # We add repeated_aug (--num_sample = 2) on Kinetics-400 here, 
@@ -23,7 +23,7 @@ BOX_ENCODER_PATH='/home/aabdujyo/scratch/activity_moma/saved_models/H4_L3_D256_L
 # batch_size can be adjusted according to number of GPUs
 # this script is for 32 GPUs (4 nodes x 8 GPUs)
 
-source /home/aabdujyo/scratch/VideoMAE/VidMAE/bin/activate
+source /home/aabdujyo/scratch/VideoBoxPretraining/VidMAE/bin/activate
 module load python/3.10
 module load scipy-stack/2023b
 module load cuda
