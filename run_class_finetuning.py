@@ -392,6 +392,22 @@ def main(args, ds_init):
         # ipdb.set_trace()
         utils.load_state_dict(model, checkpoint_model, prefix=args.model_prefix)
 
+    # for name, param in model.named_parameters():
+    #     print(name, param.requires_grad)
+    # ipdb.set_trace()
+    # Function to FT some layers based on output directory name
+    utils.set_param_requires_grad(model, args.output_dir.split("/")[-1])      
+    # Function for block expansion, based on output directory name
+    utils.block_expansion(model, args.output_dir.split("/")[-1])
+    # Function for adding adapters to all blocks
+    utils.apply_adapters(model, args.output_dir.split("/")[-1])
+    # utils.apply_lora(model, args.output_dir.split("/")[-1])
+    if args.output_dir.split("_")[-1] == "fixPatchEmb":
+        for name, param in model.named_parameters():
+            if "patch_embed" in name:
+                param.requires_grad = False
+    n_parameters = sum(p.numel() for p in model.parameters() if p.requires_grad)
+
     model.to(device)
 
     model_ema = None
@@ -404,19 +420,6 @@ def main(args, ds_init):
         print("Using EMA with decay = %.8f" % args.model_ema_decay)
 
     model_without_ddp = model
-    # for name, param in model.named_parameters():
-    #     print(name, param.requires_grad)
-    # ipdb.set_trace()
-    # Function to FT some layers based on output directory name
-    utils.set_param_requires_grad(model, args.output_dir.split("/")[-1])      
-    # Function for block expansion, based on output directory name
-    utils.block_expansion(model, args.output_dir.split("/")[-1])
-    # ipdb.set_trace()
-    if args.output_dir.split("_")[-1] == "fixPatchEmb":
-    for name, param in model.named_parameters():
-        if "patch_embed" in name:
-            param.requires_grad = False
-    n_parameters = sum(p.numel() for p in model.parameters() if p.requires_grad)
 
     # print("Model = %s" % str(model_without_ddp))
     print("Model = skipped")

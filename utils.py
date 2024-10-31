@@ -688,7 +688,65 @@ def block_expansion(model, folder_name):
             param.requires_grad = False
 
         block_ids = [int(x) for x in folder_name.split("-")[1:]]
-        block_names = [f"blocks.{x}.1" for x in folder_name.split("-")[1:]]
-
         expand_blocks(model, block_ids)
+
+        block_names = [f"blocks.{x}.1" for x in folder_name.split("-")[1:]]
         set_requires_grad_for(model, block_names)
+
+
+# Define adapter layer 
+class AdapterLayer(torch.nn.Module):
+    def __init__(self, dim, reduced_dim=32, scaling=0.1):
+        super(AdapterLayer, self).__init__()
+        self.scaling = scaling
+        self.adapter_down = torch.nn.Linear(dim, reduced_dim)
+        self.adapter_up = torch.nn.Linear(reduced_dim, dim)
+
+    def forward(self, x):
+        x = self.adapter_down(x)
+        x = torch.nn.functional.relu(x)
+        x = self.scaling * self.adapter_up(x)
+        return x
+
+class BlockWithAdapter(torch.nn.Module):
+    def __init__(self, original_block, reduced_dim):
+        super(BlockWithAdapter, self).__init__()
+        self.drop_path = original_block.drop_path
+        self.attn =  original_block.attn
+        self.norm1 =  original_block.norm1
+        self.norm2 = original_block.norm2
+        self.mlp = original_block.mlp
+        self.gamma_1 = original_block.gamma_1
+        self.gamma_2 = original_block.gamma_2
+        
+        # Add the adapter in parallel
+        self.adapter = AdapterLayer(original_block.mlp.fc1.in_features, reduced_dim)    
+
+    def forward(self, x):
+        # Run the adapter in parallel
+        adapter_output = self.adapter(x)
+
+        if self.gamma_1 is None:
+            x = x + self.drop_path(self.attn(self.norm1(x)))
+            x = x + self.drop_path(self.mlp(self.norm2(x)) + adapter_output)
+        else:
+            x = x + self.drop_path(self.gamma_1 * self.attn(self.norm1(x)))
+            x = x + self.drop_path(self.gamma_2 * self.mlp(self.norm2(x)) + adapter_output)    
+            
+        return x
+
+
+# Function for adding adapters, following AdaptFormer
+# Each block
+def apply_adapters(model, folder_name):
+    if "ADAP" in folder_name:
+        reduced_dim = int(folder_name.split("-")[-1])
+        for name, param in model.named_parameters():
+            param.requires_grad = False
+
+        layer_list = []
+        for block_id in range(len(model.blocks)):
+            model.blocks[block_id] = BlockWithAdapter(model.blocks[block_id], reduced_dim)
+            layer_list.append(f"model.blocks[{block_id}].adapter")
+
+        set_requires_grad_for(model, layer_list)
