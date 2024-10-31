@@ -401,7 +401,7 @@ def main(args, ds_init):
     utils.block_expansion(model, args.output_dir.split("/")[-1])
     # Function for adding adapters to all blocks
     utils.apply_adapters(model, args.output_dir.split("/")[-1])
-    # utils.apply_lora(model, args.output_dir.split("/")[-1])
+    utils.apply_lora(model, args.output_dir.split("/")[-1])
     if args.output_dir.split("_")[-1] == "fixPatchEmb":
         for name, param in model.named_parameters():
             if "patch_embed" in name:
@@ -424,6 +424,7 @@ def main(args, ds_init):
     # print("Model = %s" % str(model_without_ddp))
     print("Model = skipped")
     print('number of params:', n_parameters)
+    print("Total number of params:", sum(p.numel() for p in model.parameters()))
 
     total_batch_size = args.batch_size * args.update_freq * utils.get_world_size()
     num_training_steps_per_epoch = len(dataset_train) // total_batch_size

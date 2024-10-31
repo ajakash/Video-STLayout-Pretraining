@@ -696,11 +696,17 @@ def block_expansion(model, folder_name):
 
 # Define adapter layer 
 class AdapterLayer(torch.nn.Module):
-    def __init__(self, dim, reduced_dim=32, scaling=0.1):
+    def __init__(self, dim, reduced_dim, scaling):
         super(AdapterLayer, self).__init__()
-        self.scaling = scaling
         self.adapter_down = torch.nn.Linear(dim, reduced_dim)
         self.adapter_up = torch.nn.Linear(reduced_dim, dim)
+        
+        # Zeroing out adapter_up weights so that initial output remains the same
+        self.adapter_up.weight = torch.nn.Parameter(torch.zeros_like(self.adapter_up.weight))
+        self.adapter_up.bias = torch.nn.Parameter(torch.zeros_like(self.adapter_up.bias))
+
+        # Set a scaling factor based on reduced_dim
+        self.scaling = scaling / reduced_dim
 
     def forward(self, x):
         x = self.adapter_down(x)
@@ -709,7 +715,7 @@ class AdapterLayer(torch.nn.Module):
         return x
 
 class BlockWithAdapter(torch.nn.Module):
-    def __init__(self, original_block, reduced_dim):
+    def __init__(self, original_block, reduced_dim, scaling):
         super(BlockWithAdapter, self).__init__()
         self.drop_path = original_block.drop_path
         self.attn =  original_block.attn
@@ -720,7 +726,7 @@ class BlockWithAdapter(torch.nn.Module):
         self.gamma_2 = original_block.gamma_2
         
         # Add the adapter in parallel
-        self.adapter = AdapterLayer(original_block.mlp.fc1.in_features, reduced_dim)    
+        self.adapter = AdapterLayer(original_block.mlp.fc1.in_features, reduced_dim, scaling)    
 
     def forward(self, x):
         # Run the adapter in parallel
@@ -737,16 +743,86 @@ class BlockWithAdapter(torch.nn.Module):
 
 
 # Function for adding adapters, following AdaptFormer
-# Each block
 def apply_adapters(model, folder_name):
     if "ADAP" in folder_name:
         reduced_dim = int(folder_name.split("-")[-1])
+        scaling = float(folder_name.split("-")[-2])
         for name, param in model.named_parameters():
             param.requires_grad = False
 
         layer_list = []
         for block_id in range(len(model.blocks)):
-            model.blocks[block_id] = BlockWithAdapter(model.blocks[block_id], reduced_dim)
+            model.blocks[block_id] = BlockWithAdapter(model.blocks[block_id], reduced_dim, scaling)
             layer_list.append(f"model.blocks[{block_id}].adapter")
+
+        set_requires_grad_for(model, layer_list)
+
+
+class AttnWithLoRA(torch.nn.Module):
+    def __init__(self, original_attn, reduced_dim, scaling):
+        super(AttnWithLoRA, self).__init__()
+        self.num_heads = original_attn.num_heads
+        self.scale =  original_attn.scale
+        self.qkv =  original_attn.qkv
+        self.q_bias =  original_attn.q_bias
+        self.v_bias =  original_attn.v_bias
+        self.attn_drop =  original_attn.attn_drop
+        self.proj =  original_attn.proj
+        self.proj_drop =  original_attn.proj_drop
+        
+        # Add lora layers for qkv and proj
+        self.qkv_lora_down = torch.nn.Linear(original_attn.qkv.in_features, reduced_dim*3, bias=False)
+        self.qkv_lora_up = torch.nn.Linear(reduced_dim*3, original_attn.qkv.out_features, bias=False)    
+        self.proj_lora_down = torch.nn.Linear(original_attn.proj.in_features, reduced_dim, bias=False)
+        self.proj_lora_up = torch.nn.Linear(reduced_dim, original_attn.proj.out_features, bias=False)
+
+        # # Zeroing out up weights so that initial output remains the same
+        self.qkv_lora_up.weight = torch.nn.Parameter(torch.zeros_like(self.qkv_lora_up.weight))
+        self.proj_lora_up.weight = torch.nn.Parameter(torch.zeros_like(self.proj_lora_up.weight))
+
+        # Set a scaling factor based on reduced_dim
+        self.lora_scaling = scaling / reduced_dim
+
+    def forward(self, x):
+        B, N, C = x.shape
+        qkv_bias = None
+        if self.q_bias is not None:
+            qkv_bias = torch.cat((self.q_bias, torch.zeros_like(self.v_bias, requires_grad=False), self.v_bias))
+        # qkv = self.qkv(x).reshape(B, N, 3, self.num_heads, C // self.num_heads).permute(2, 0, 3, 1, 4)
+        # Add qkv_lora with scaling
+        qkv = F.linear(input=x, weight=self.qkv.weight, bias=qkv_bias) + \
+                self.lora_scaling * self.qkv_lora_up(self.qkv_lora_down(x))
+        qkv = qkv.reshape(B, N, 3, self.num_heads, -1).permute(2, 0, 3, 1, 4)
+        q, k, v = qkv[0], qkv[1], qkv[2]   # make torchscript happy (cannot use tensor as tuple)
+
+        q = q * self.scale
+        attn = (q @ k.transpose(-2, -1))
+
+        attn = attn.softmax(dim=-1)
+        attn = self.attn_drop(attn)
+
+        x = (attn @ v).transpose(1, 2).reshape(B, N, -1)
+        # Add proj_lora with scaling
+        x = self.proj(x) + self.lora_scaling * self.proj_lora_up(self.proj_lora_down(x))
+        x = self.proj_drop(x)
+
+        return x
+            
+# Function for adding LoRA weight matrices to 
+# qkv and proj layers in attn in each block
+def apply_lora(model, folder_name):
+    if "LoRA" in folder_name:
+        reduced_dim = int(folder_name.split("-")[-1])
+        scaling = float(folder_name.split("-")[-2])
+        for name, param in model.named_parameters():
+            param.requires_grad = False
+
+        layer_list = []
+        for block_id in range(len(model.blocks)):
+            model.blocks[block_id].attn = AttnWithLoRA(model.blocks[block_id].attn, reduced_dim, scaling)
+            layer_list.append(f"model.blocks[{block_id}].attn.qkv_lora_down")
+            layer_list.append(f"model.blocks[{block_id}].attn.qkv_lora_up")
+            layer_list.append(f"model.blocks[{block_id}].attn.proj_lora_down")
+            layer_list.append(f"model.blocks[{block_id}].attn.proj_lora_up")
 
         set_requires_grad_for(model, layer_list)
