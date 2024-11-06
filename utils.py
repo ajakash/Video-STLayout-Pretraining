@@ -706,7 +706,10 @@ class AdapterLayer(torch.nn.Module):
         self.adapter_up.bias = torch.nn.Parameter(torch.zeros_like(self.adapter_up.bias))
 
         # Set a scaling factor based on reduced_dim
-        self.scaling = scaling / reduced_dim
+        if scaling == "LRN":
+            self.scaling = torch.nn.Parameter(torch.ones(1))
+        else:
+            self.scaling = scaling / reduced_dim
 
     def forward(self, x):
         x = self.adapter_down(x)
@@ -746,7 +749,11 @@ class BlockWithAdapter(torch.nn.Module):
 def apply_adapters(model, folder_name):
     if "ADAP" in folder_name:
         reduced_dim = int(folder_name.split("-")[-1])
-        scaling = float(folder_name.split("-")[-2])
+        scaling = folder_name.split("-")[-2]
+        if scaling == "LRN":
+            pass
+        else:
+            scaling = float(scaling)
         for name, param in model.named_parameters():
             param.requires_grad = False
 
@@ -781,7 +788,10 @@ class AttnWithLoRA(torch.nn.Module):
         self.proj_lora_up.weight = torch.nn.Parameter(torch.zeros_like(self.proj_lora_up.weight))
 
         # Set a scaling factor based on reduced_dim
-        self.lora_scaling = scaling / reduced_dim
+        if scaling == "LRN":
+            self.lora_scaling = torch.nn.Parameter(torch.ones(1))
+        else:
+            self.lora_scaling = scaling / reduced_dim
 
     def forward(self, x):
         B, N, C = x.shape
@@ -813,7 +823,11 @@ class AttnWithLoRA(torch.nn.Module):
 def apply_lora(model, folder_name):
     if "LoRA" in folder_name:
         reduced_dim = int(folder_name.split("-")[-1])
-        scaling = float(folder_name.split("-")[-2])
+        scaling = folder_name.split("-")[-2]
+        if scaling == "LRN":
+            pass
+        else:
+            scaling = float(scaling)
         for name, param in model.named_parameters():
             param.requires_grad = False
 
@@ -824,5 +838,7 @@ def apply_lora(model, folder_name):
             layer_list.append(f"model.blocks[{block_id}].attn.qkv_lora_up")
             layer_list.append(f"model.blocks[{block_id}].attn.proj_lora_down")
             layer_list.append(f"model.blocks[{block_id}].attn.proj_lora_up")
+            if scaling == "LRN":
+                layer_list.append(f"model.blocks[{block_id}].attn.lora_scaling")
 
         set_requires_grad_for(model, layer_list)

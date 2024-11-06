@@ -394,7 +394,6 @@ def main(args, ds_init):
 
     # for name, param in model.named_parameters():
     #     print(name, param.requires_grad)
-    # ipdb.set_trace()
     # Function to FT some layers based on output directory name
     utils.set_param_requires_grad(model, args.output_dir.split("/")[-1])      
     # Function for block expansion, based on output directory name
@@ -402,6 +401,7 @@ def main(args, ds_init):
     # Function for adding adapters to all blocks
     utils.apply_adapters(model, args.output_dir.split("/")[-1])
     utils.apply_lora(model, args.output_dir.split("/")[-1])
+    # ipdb.set_trace()
     if args.output_dir.split("_")[-1] == "fixPatchEmb":
         for name, param in model.named_parameters():
             if "patch_embed" in name:
