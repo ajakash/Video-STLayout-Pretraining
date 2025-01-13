@@ -401,13 +401,13 @@ def main(args, ds_init):
     # Function for adding adapters to all blocks
     utils.apply_adapters(model, args.output_dir.split("/")[-1])
     utils.apply_lora(model, args.output_dir.split("/")[-1])
-    # ipdb.set_trace()
+
     if args.output_dir.split("_")[-1] == "fixPatchEmb":
         for name, param in model.named_parameters():
             if "patch_embed" in name:
                 param.requires_grad = False
     n_parameters = sum(p.numel() for p in model.parameters() if p.requires_grad)
-
+    # ipdb.set_trace()
     model.to(device)
 
     model_ema = None

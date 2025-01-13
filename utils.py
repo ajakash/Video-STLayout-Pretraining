@@ -760,7 +760,7 @@ def apply_adapters(model, folder_name):
         layer_list = []
         for block_id in range(len(model.blocks)):
             model.blocks[block_id] = BlockWithAdapter(model.blocks[block_id], reduced_dim, scaling)
-            layer_list.append(f"model.blocks[{block_id}].adapter")
+            layer_list.append(f"blocks[{block_id}].adapter")
 
         set_requires_grad_for(model, layer_list)
 
@@ -834,11 +834,11 @@ def apply_lora(model, folder_name):
         layer_list = []
         for block_id in range(len(model.blocks)):
             model.blocks[block_id].attn = AttnWithLoRA(model.blocks[block_id].attn, reduced_dim, scaling)
-            layer_list.append(f"model.blocks[{block_id}].attn.qkv_lora_down")
-            layer_list.append(f"model.blocks[{block_id}].attn.qkv_lora_up")
-            layer_list.append(f"model.blocks[{block_id}].attn.proj_lora_down")
-            layer_list.append(f"model.blocks[{block_id}].attn.proj_lora_up")
+            layer_list.append(f"blocks[{block_id}].attn.qkv_lora_down")
+            layer_list.append(f"blocks[{block_id}].attn.qkv_lora_up")
+            layer_list.append(f"blocks[{block_id}].attn.proj_lora_down")
+            layer_list.append(f"blocks[{block_id}].attn.proj_lora_up")
             if scaling == "LRN":
-                layer_list.append(f"model.blocks[{block_id}].attn.lora_scaling")
+                layer_list.append(f"blocks[{block_id}].attn.lora_scaling")
 
         set_requires_grad_for(model, layer_list)

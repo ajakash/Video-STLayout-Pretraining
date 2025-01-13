@@ -152,7 +152,8 @@ def get_args():
     parser.add_argument('--sampling_rate', type=int, default= 4)
     parser.add_argument('--data_set', default='Kinetics-400',
                         choices=['Kinetics-400', 'SSV2', 'UCF101', 'HMDB51', 'MOMA_sact', \
-                                 'MOMA_sact_uniSampling', 'MOMA_act', 'image_folder', 'MOMA_sact_frames_boxes'],
+                                 'MOMA_sact_uniSampling', 'MOMA_act', 'image_folder', 'MOMA_sact_frames_boxes', \
+                                 'MOMA_sact_frames_detected_boxes'],
                         type=str, help='dataset')
     parser.add_argument('--output_dir', default='',
                         help='path where to save, empty for no saving')
