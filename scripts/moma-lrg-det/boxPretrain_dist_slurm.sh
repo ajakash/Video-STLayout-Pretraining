@@ -42,7 +42,7 @@ OMP_NUM_THREADS=1 python -m torch.distributed.launch --nproc_per_node=4 \
     --num_workers 10 \
     --model vit_base_patch16_224 \
     --batch_size $2 \
-    --epochs $3 \
+    --epochs 2000 \
     --num_sample 1 \
     --data_set MOMA_sact_frames_detected_boxes \
     --nb_classes 91 \
