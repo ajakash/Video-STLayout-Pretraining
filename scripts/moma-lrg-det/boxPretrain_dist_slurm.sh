@@ -44,7 +44,7 @@ OMP_NUM_THREADS=1 python -m torch.distributed.launch --nproc_per_node=4 \
     --batch_size $2 \
     --epochs $3 \
     --num_sample 1 \
-    --data_set MOMA_sact_frames_boxes \
+    --data_set MOMA_sact_frames_detected_boxes \
     --nb_classes 91 \
     --vid_encoder_init_ckpt ${VID_ENCODER_PATH} \
     --box_encoder_init_ckpt ${BOX_ENCODER_PATH} \

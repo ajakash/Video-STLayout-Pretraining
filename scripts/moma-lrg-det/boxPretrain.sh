@@ -28,7 +28,7 @@ python run_box_pretraining.py \
     --batch_size $2 \
     --epochs 150 \
     --num_sample 1 \
-    --data_set MOMA_sact_frames_boxes \
+    --data_set MOMA_sact_frames_detected_boxes \
     --nb_classes 91 \
     --vid_encoder_init_ckpt ${VID_ENCODER_PATH} \
     --box_encoder_init_ckpt ${BOX_ENCODER_PATH} \
