@@ -5,7 +5,7 @@ LOG_DIR='/home/aabdujyo/scratch/VideoBoxPretraining/log/'$1
 # path to pretrain model
 VID_ENCODER_PATH='/home/aabdujyo/scratch/VideoBoxPretraining/VideoMAE_pretrained_ckpts/checkpoint_ViT-B_SS_ep2400.pth'
 # BOX_ENCODER_PATH='/home/aabdujyo/scratch/activity_moma/saved_models/H4_L3_D256_LR0001v2/bbox2activity_best.pt'
-BOX_ENCODER_PATH='/home/aabdujyo/scratch/activity_moma/saved_models/Det_min10_H4_L3_D256_LR0001/bbox2activity_best.pt'
+BOX_ENCODER_PATH='/home/aabdujyo/scratch/activity_moma/saved_models/Det12hr_min10_H3_L2_D96_LR0001/bbox2activity_best.pt'
 
 # We add repeated_aug (--num_sample = 2) on Kinetics-400 here, 
 # which could better performance while need more time for fine-tuning

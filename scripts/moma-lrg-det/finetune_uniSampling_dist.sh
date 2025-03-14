@@ -46,8 +46,8 @@ OMP_NUM_THREADS=1 CUDA_VISIBLE_DEVICES=0,1,2,3 python -m torch.distributed.launc
     --test_num_segment 5 \
     --test_num_crop 3 \
     --distributed \
-    --dist_eval #\
-    # --eval #\
+    --dist_eval
+    # --eval 
     # --enable_deepspeed 
     # --data_path ${DATA_PATH} \
     # change num_wrokers for distributed training
