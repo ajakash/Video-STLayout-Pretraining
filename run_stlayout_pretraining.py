@@ -18,7 +18,7 @@ from timm.utils import ModelEma
 from optim_factory import create_optimizer, get_parameter_groups, LayerDecayValueAssigner
 
 from datasets import build_dataset
-from engine_for_box_pretraining import train_one_epoch, validation_one_epoch #, final_test, merge
+from engine_for_stlayout_pretraining import train_one_epoch, validation_one_epoch #, final_test, merge
 from utils import NativeScalerWithGradNormCount as NativeScaler
 from utils import  multiple_samples_collate
 import utils
@@ -26,7 +26,7 @@ import modeling_finetune
 
 
 def get_args():
-    parser = argparse.ArgumentParser('Video-Box Pretraining script', add_help=False)
+    parser = argparse.ArgumentParser('Video-STLayout Pretraining script', add_help=False)
     parser.add_argument('--batch_size', default=64, type=int)
     parser.add_argument('--epochs', default=30, type=int)
     parser.add_argument('--update_freq', default=1, type=int)
@@ -473,7 +473,7 @@ def main(args, ds_init):
     box_encoder = utils.load_box_encoder(args)
     box_encoder.to(device)
     print("Box Encoder loaded")
-    model = utils.BoxPretrainingModel(box_encoder, model)
+    model = utils.STLayoutPretrainingModel(box_encoder, model)
 
     if args.enable_deepspeed:
         loss_scaler = None
@@ -528,7 +528,7 @@ def main(args, ds_init):
 
     # Why this????? O.o
     # In order to resume training from a check point. 
-    # Comment this out for now for box pretraining since 
+    # Comment this out for now for STLayout pretraining since 
     # two models are involved, not straightforward.
     # utils.auto_load_model(
     #     args=args, model=model, model_without_ddp=model_without_ddp,

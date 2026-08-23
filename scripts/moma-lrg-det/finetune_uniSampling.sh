@@ -1,11 +1,11 @@
 # Set the path to save checkpoints
-OUTPUT_DIR='/home/aabdujyo/scratch/VideoBoxPretraining/checkpoints/'$1
+OUTPUT_DIR='/home/aabdujyo/scratch/Video-STLayout-Pretraining/checkpoints/'$1
 # path to Kinetics set (train.csv/val.csv/test.csv)
-LOG_DIR='/home/aabdujyo/scratch/VideoBoxPretraining/log/'$1
+LOG_DIR='/home/aabdujyo/scratch/Video-STLayout-Pretraining/log/'$1
 # path to pretrain model
-MODEL_PATH='/home/aabdujyo/scratch/VideoBoxPretraining/'$2
-# MODEL_PATH='/home/aabdujyo/scratch/VideoBoxPretraining/VideoMAE_pretrained_ckpts/'$2
-# MODEL_PATH='/home/aabdujyo/scratch/VideoBoxPretraining/VideoMAE_pretrained_ckpts/checkpoint_ViT-B_SS_ep2400.pth'
+MODEL_PATH='/home/aabdujyo/scratch/Video-STLayout-Pretraining/'$2
+# MODEL_PATH='/home/aabdujyo/scratch/Video-STLayout-Pretraining/VideoMAE_pretrained_ckpts/'$2
+# MODEL_PATH='/home/aabdujyo/scratch/Video-STLayout-Pretraining/VideoMAE_pretrained_ckpts/checkpoint_ViT-B_SS_ep2400.pth'
 
 # We add repeated_aug (--num_sample = 2) on Kinetics-400 here, 
 # which could better performance while need more time for fine-tuning
@@ -13,7 +13,7 @@ MODEL_PATH='/home/aabdujyo/scratch/VideoBoxPretraining/'$2
 # batch_size can be adjusted according to number of GPUs
 # this script is for 32 GPUs (4 nodes x 8 GPUs)
 
-source /home/aabdujyo/scratch/VideoBoxPretraining/VidMAE/bin/activate
+source /home/aabdujyo/scratch/Video-STLayout-Pretraining/VidMAE/bin/activate
 module load python/3.10
 module load scipy-stack/2023b
 module load cuda

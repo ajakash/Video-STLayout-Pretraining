@@ -1,7 +1,7 @@
 VideoMAE_pretrained_ckpts/
 annotations/
 checkpoints/
-data_VideoBoxPT/
+data_VideoSTLayoutPT/
 models/
 log/
 VidMAE/

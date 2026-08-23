@@ -545,9 +545,9 @@ def load_box_encoder(args):
 
     return model
 
-class BoxPretrainingModel(torch.nn.Module):
+class STLayoutPretrainingModel(torch.nn.Module):
     def __init__(self, boxEncoder, videoEncoder):
-        super(BoxPretrainingModel, self).__init__()
+        super(STLayoutPretrainingModel, self).__init__()
         self.boxEncoder = boxEncoder
         self.videoEncoder = videoEncoder
         

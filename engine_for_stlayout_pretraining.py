@@ -15,7 +15,7 @@ def train_class_batch(args, model, bbox_set, bbox_tgt, bbox_mask, bbox_targets, 
     box_outputs, video_outputs = model(bbox_set, bbox_tgt, bbox_mask, samples)
     # DONE: Check that bbox_targets and target are the same
     # bbox_targets are indices, target are class probability vectors
-    # Anyways doesn't matter for box pretraining ¯\_(ツ)_/¯
+    # Anyways doesn't matter for STLayout pretraining ¯\_(ツ)_/¯
 
     if args.distributed:
         # allgather = utils.AllGather_multi.apply
