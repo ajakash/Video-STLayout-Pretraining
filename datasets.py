@@ -3,7 +3,7 @@ from torchvision import transforms
 from transforms import *
 from masking_generator import TubeMaskingGenerator
 from kinetics import VideoClsDataset, VideoMAE
-from ssv2 import SSVideoClsDataset, VideoBoxClsDataset
+from ssv2 import SSVideoClsDataset, VideoSTLayoutClsDataset
 
 
 class DataAugmentationForVideoMAE(object):
@@ -164,7 +164,7 @@ def build_dataset(is_train, test_mode, args):
             box_data_path = os.path.join('data_VideoSTLayoutPT/val_sact.pt')
 
 
-        dataset = VideoBoxClsDataset(
+        dataset = VideoSTLayoutClsDataset(
             anno_path=anno_path,
             box_data_path=box_data_path,
             data_path='/',
@@ -199,7 +199,7 @@ def build_dataset(is_train, test_mode, args):
             box_data_path = os.path.join('data_VideoSTLayoutPT/detection_data_min10boxes/val.pt')
 
 
-        dataset = VideoBoxClsDataset(
+        dataset = VideoSTLayoutClsDataset(
             anno_path=anno_path,
             box_data_path=box_data_path,
             data_path='/',

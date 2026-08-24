@@ -128,8 +128,8 @@ def get_args():
 
     # Finetuning params
     parser.add_argument('--vid_encoder_init_ckpt', default='', help='video encoder initialization checkpoint')
-    # DONE: Add box_encoder_init_ckpt
-    parser.add_argument('--box_encoder_init_ckpt', default='', help='box encoder initialization checkpoint')
+    # DONE: Add stlayout_encoder_init_ckpt
+    parser.add_argument('--stlayout_encoder_init_ckpt', default='', help='STLayout encoder initialization checkpoint')
     parser.add_argument('--model_key', default='model|module', type=str)
     parser.add_argument('--model_prefix', default='', type=str)
     parser.add_argument('--init_scale', default=0.001, type=float)
@@ -314,7 +314,7 @@ def main(args, ds_init):
             prob=args.mixup_prob, switch_prob=args.mixup_switch_prob, mode=args.mixup_mode,
             label_smoothing=args.smoothing, num_classes=args.nb_classes)
 
-    # TO NOT DO: Add box model in here?
+    # TO NOT DO: Add STLayout encoder in here?
     model = create_model(
         args.model,
         pretrained=False,
@@ -404,14 +404,14 @@ def main(args, ds_init):
         # ipdb.set_trace()
         utils.load_state_dict(model, checkpoint_model, prefix=args.model_prefix)
 
-    # TO NOT DO: Add args.box_encoder_init_ckpt to args
-    # and initialize model.box_encoder
-    # if args.box_encoder_init_ckpt:
-    #     if args.box_encoder_init_ckpt.startswith('https'):
+    # TO NOT DO: Add args.stlayout_encoder_init_ckpt to args
+    # and initialize model.stlayout_encoder
+    # if args.stlayout_encoder_init_ckpt:
+    #     if args.stlayout_encoder_init_ckpt.startswith('https'):
     #         checkpoint = torch.hub.load_state_dict_from_url(
-    #             args.box_encoder_init_ckpt, map_location='cpu', check_hash=True)
+    #             args.stlayout_encoder_init_ckpt, map_location='cpu', check_hash=True)
     #     else:
-    #         checkpoint = torch.load(args.box_encoder_init_ckpt, map_location='cpu')
+    #         checkpoint = torch.load(args.stlayout_encoder_init_ckpt, map_location='cpu')
     
     model.to(device)
 
@@ -426,7 +426,7 @@ def main(args, ds_init):
 
     # model_without_ddp = model
     # TO NOT DO: Set all layers of model.vit_encoder to require grad
-    # and model.box_encoder to not require grad
+    # and model.stlayout_encoder to not require grad
     # Also update the below if required
     # if args.output_dir.split("_")[-1] == "testv2":
     #     ipdb.set_trace()
@@ -467,13 +467,13 @@ def main(args, ds_init):
     skip_weight_decay_list = model.no_weight_decay()
     print("Skip weight decay list: ", skip_weight_decay_list)
 
-    # DONE: wrap box encoder into model 
+    # DONE: wrap STLayout encoder into model 
     # model -> model.video_encoder 
-    # initialize model.box_encoder
-    box_encoder = utils.load_box_encoder(args)
-    box_encoder.to(device)
-    print("Box Encoder loaded")
-    model = utils.STLayoutPretrainingModel(box_encoder, model)
+    # initialize model.stlayout_encoder
+    stlayout_encoder = utils.load_stlayout_encoder(args)
+    stlayout_encoder.to(device)
+    print("STLayout Encoder loaded")
+    model = utils.STLayoutPretrainingModel(stlayout_encoder, model)
 
     if args.enable_deepspeed:
         loss_scaler = None
@@ -494,7 +494,7 @@ def main(args, ds_init):
         else:
             model_without_ddp = model
             
-        # DONE: Make sure box encoder parameters are not added for updates, check other details
+        # DONE: Make sure STLayout encoder parameters are not added for updates, check other details
         optimizer = create_optimizer(
             args, model_without_ddp, skip_list=skip_weight_decay_list,
             get_num_layer=assigner.get_layer_id if assigner is not None else None, 

@@ -284,9 +284,9 @@ class SSVideoClsDataset(Dataset):
         else:
             return len(self.test_dataset)
 
-class VideoBoxClsDataset(Dataset):
+class VideoSTLayoutClsDataset(Dataset):
     """Copy of SSVideoClsDataset with
-    box data added to it"""
+    spatio-temporal layout (box sequence) data added to it"""
 
     def __init__(self, anno_path, box_data_path, data_path, mode='train', clip_len=8,
                 frame_sample_rate=2,

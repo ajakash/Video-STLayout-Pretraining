@@ -74,7 +74,7 @@ def train_one_epoch(args, model: torch.nn.Module, criterion: torch.nn.Module,
         bbox_set = bbox_set.to(device, non_blocking=True)
         bbox_mask = bbox_mask.to(device, non_blocking=True)
         bbox_targets = targets_bbox.to(device, non_blocking=True)
-        # Box transforemer decoder inputs
+        # STLayout decoder inputs
         bbox_tgt = torch.zeros([bbox_set.size(dim=0), 1], dtype=torch.int).to(device, non_blocking=True)
 
         if mixup_fn is not None:
@@ -177,7 +177,7 @@ def validation_one_epoch(data_loader, model, device, criterion):
         bbox_set = batch[2].to(device, non_blocking=True)
         bbox_mask = batch[3].to(device, non_blocking=True)
         bbox_targets = batch[4].to(device, non_blocking=True)
-        # Box transforemer decoder inputs
+        # STLayout decoder inputs
         bbox_tgt = torch.zeros([bbox_set.size(dim=0), 1], dtype=torch.int).to(device, non_blocking=True)
         videos = videos.to(device, non_blocking=True)
         target = target.to(device, non_blocking=True)

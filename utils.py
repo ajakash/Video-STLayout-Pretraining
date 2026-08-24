@@ -537,22 +537,22 @@ def multiple_samples_collate(batch, fold=False):
     else:
         return inputs, labels, video_idx, extra_data
 
-def load_box_encoder(args):
-    model = torch.load(args.box_encoder_init_ckpt, map_location='cpu')
-    model = torch.load(args.box_encoder_init_ckpt, map_location='cpu')
+def load_stlayout_encoder(args):
+    model = torch.load(args.stlayout_encoder_init_ckpt, map_location='cpu')
+    model = torch.load(args.stlayout_encoder_init_ckpt, map_location='cpu')
     for param in model.parameters():
         param.requires_grad = False
 
     return model
 
 class STLayoutPretrainingModel(torch.nn.Module):
-    def __init__(self, boxEncoder, videoEncoder):
+    def __init__(self, stlayoutEncoder, videoEncoder):
         super(STLayoutPretrainingModel, self).__init__()
-        self.boxEncoder = boxEncoder
+        self.stlayoutEncoder = stlayoutEncoder
         self.videoEncoder = videoEncoder
         
     def forward(self, box_src, box_tgt, box_src_padding_mask, frames):
-        box_outputs = self.boxEncoder(box_src, box_tgt, box_src_padding_mask)
+        box_outputs = self.stlayoutEncoder(box_src, box_tgt, box_src_padding_mask)
         video_outputs = self.videoEncoder(frames)
         return box_outputs, video_outputs
 
@@ -563,7 +563,7 @@ Object-aware Video-language Pre-training for Retrieval (CVPR 2022)
 '''
 
 # From OATrans/model/model.py
-# To compute similarity between visual and box features
+# To compute similarity between visual and STLayout features
 def sim_matrix(a, b, eps=1e-8):
     """
     added eps for numerical stability
