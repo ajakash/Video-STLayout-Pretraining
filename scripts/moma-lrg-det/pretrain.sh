@@ -6,8 +6,8 @@ LOG_DIR='/home/aabdujyo/scratch/Video-STLayout-Pretraining/log/'$1
 # VID_ENCODER_PATH='/home/aabdujyo/scratch/Video-STLayout-Pretraining/VideoMAE_pretrained_ckpts/checkpoint_ViT-B_SS_ep2400.pth'
 VID_ENCODER_PATH='/home/aabdujyo/scratch/Video-STLayout-Pretraining/checkpoints/stlayoutPTdet_sact_B_3daysV2/checkpoint-'$3
 
-# STLAYOUT_ENCODER_PATH='/home/aabdujyo/scratch/activity_moma/saved_models/H4_L3_D256_LR0001v2/bbox2activity_best.pt'
-STLAYOUT_ENCODER_PATH='/home/aabdujyo/scratch/activity_moma/saved_models/Det12hr_min10_H3_L2_D96_LR0001/bbox2activity_best.pt'
+# STLAYOUT_ENCODER_PATH='stlayout_encoder/saved_models/H4_L3_D256_LR0001v2/bbox2activity_best.pt'
+STLAYOUT_ENCODER_PATH='stlayout_encoder/saved_models/Det12hr_min10_H3_L2_D96_LR0001/bbox2activity_best.pt'
 
 # We add repeated_aug (--num_sample = 2) on Kinetics-400 here, 
 # which could better performance while need more time for fine-tuning

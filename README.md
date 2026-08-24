@@ -1,24 +1,26 @@
 # Video-STLayout-Pretraining
 
-Extends [VideoMAE](https://github.com/MCG-NJU/VideoMAE) with a spatio-temporal layout pretraining objective on [MOMA-LRG](https://moma.stanford.edu/). The original VideoMAE README is preserved as [VideoMAE_README.md](VideoMAE_README.md).
+Extends [VideoMAE](https://github.com/MCG-NJU/VideoMAE) with a spatio-temporal layout pretraining objective, targeting [MOMA-LRG](https://moma.stanford.edu/) sub-activity detection. The original VideoMAE README is preserved as [VideoMAE_README.md](VideoMAE_README.md).
 
 ## Pipeline
 
 Three stages. Stage 2 has two variants — one using ground-truth MOMA-LRG boxes, one using detector-generated boxes.
 
 ```
-Stage 1  STLayout encoder training       [activity_moma repo]    → bbox2activity_best.pt
+Stage 1  STLayout encoder training  stlayout_encoder/                            → bbox2activity_best.pt
 Stage 2  STLayout pretraining       scripts/moma-lrg{,-det}/pretrain[_slurm].sh
 Stage 3  Fine-tuning (MOMA sact)    scripts/moma-lrg{,-det}/finetune[_slurm].sh
 ```
 
 ## Setup
 
-Install per [INSTALL.md](INSTALL.md); data per [DATASET.md](DATASET.md) (VideoMAE upstream docs).
+Python 3.6+. Core deps: `torch`, `torchvision` (PyTorch ≥ 1.8 recommended — see [INSTALL.md](INSTALL.md) for CUDA-paired versions), `timm==0.4.12`, `deepspeed==0.5.8`, `tensorboardX`, `decord`, `einops`. Data prep per [DATASET.md](DATASET.md).
+
+Stage 1 ([stlayout_encoder/](stlayout_encoder/README.md)) shares this env; only extra dep is `wandb`.
 
 Additional prerequisites:
 - **VideoMAE ViT-B checkpoint** — `checkpoint_ViT-B_SS_ep2400.pth` from the [VideoMAE model zoo](https://github.com/MCG-NJU/VideoMAE/blob/main/MODEL_ZOO.md).
-- **STLayout encoder checkpoint** — `bbox2activity_best.pt` from the `activity_moma` repo. Annotated and detected pipelines use *different* STLayout encoders (trained on different box sources).
+- **STLayout encoder checkpoint** — `bbox2activity_best.pt` produced by Stage 1 in [stlayout_encoder/](stlayout_encoder/README.md). Annotated and detected pipelines use *different* STLayout encoders (trained on different box sources).
 
 Before running, edit the paths at the top of each script (`OUTPUT_DIR`, `LOG_DIR`, `VID_ENCODER_PATH`, `STLAYOUT_ENCODER_PATH`) and the Slurm `--account` if applicable.
 
