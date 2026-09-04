@@ -1,6 +1,6 @@
 # Video-STLayout-Pretraining
 
-Extends [VideoMAE](https://github.com/MCG-NJU/VideoMAE) with a spatio-temporal layout pretraining objective, targeting [MOMA-LRG](https://moma.stanford.edu/) sub-activity detection. The original VideoMAE README is preserved as [VideoMAE_README.md](VideoMAE_README.md).
+Extends [VideoMAE](https://github.com/MCG-NJU/VideoMAE) with a spatio-temporal layout pretraining objective, targeting [MOMA-LRG](https://moma.stanford.edu/) sub-activity classification. The original VideoMAE README is preserved as [VideoMAE_README.md](VideoMAE_README.md).
 
 ## Pipeline
 

@@ -17,12 +17,6 @@ LOG_DIR='log/'$1
 VID_ENCODER_PATH='VideoMAE_pretrained_ckpts/checkpoint_ViT-B_SS_ep2400.pth'
 STLAYOUT_ENCODER_PATH='stlayout_encoder/saved_models/H4_L3_D256_LR0001/bbox2activity_best.pt'
 
-# We add repeated_aug (--num_sample = 2) on Kinetics-400 here, 
-# which could better performance while need more time for fine-tuning
-
-# batch_size can be adjusted according to number of GPUs
-# this script is for 32 GPUs (4 nodes x 8 GPUs)
-
 # source /path/to/your/venv/bin/activate
 # module load python/3.10
 # module load scipy-stack/2023b

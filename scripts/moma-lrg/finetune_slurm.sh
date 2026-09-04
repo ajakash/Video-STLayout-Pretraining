@@ -18,12 +18,6 @@ MODEL_PATH=$2
 # MODEL_PATH='VideoMAE_pretrained_ckpts/checkpoint_ViT-S_SS_ep2400.pth'
 # MODEL_PATH='VideoMAE_pretrained_ckpts/checkpoint_ViT-B_SS_ep2400.pth'
 
-# We add repeated_aug (--num_sample = 2) on Kinetics-400 here, 
-# which could better performance while need more time for fine-tuning
-
-# batch_size can be adjusted according to number of GPUs
-# this script is for 32 GPUs (4 nodes x 8 GPUs)
-
 # source /path/to/your/venv/bin/activate
 # module load python/3.10
 # module load scipy-stack/2023b

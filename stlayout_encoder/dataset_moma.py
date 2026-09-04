@@ -10,9 +10,7 @@ class BBox2ActivityDataset(Dataset):
     def __init__(self, split='train', dir_moma=None, min_boxNum=10):
         # make a list of MOMA sact ids, where each sact has >= 10 bboxes
         if dir_moma is None or dir_moma == 'None':
-            self.dir_moma = "/Users/akashaj/Work/Datasets/MOMA-LRG"
-        elif dir_moma == "cs30":
-            self.dir_moma = "/local-scratch/localhome/aabdujyo/datasets/MOMA-LRG"
+            self.dir_moma = "MOMA-LRG"
         else:
             self.dir_moma = dir_moma
 
