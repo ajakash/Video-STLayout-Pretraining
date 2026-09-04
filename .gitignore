@@ -8,4 +8,5 @@ VidMAE/
 VidMAE_beluga/
 detection_data/
 __pycache__/
-core*
+core
+.vscode/

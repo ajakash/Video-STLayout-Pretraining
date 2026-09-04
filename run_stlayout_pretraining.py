@@ -9,7 +9,7 @@ import os
 from functools import partial
 from pathlib import Path
 from collections import OrderedDict
-import ipdb
+# import ipdb
 
 from mixup import Mixup
 from timm.models import create_model
@@ -572,7 +572,6 @@ def main(args, ds_init):
                     args=args, model=model, model_without_ddp=model_without_ddp.videoEncoder, optimizer=optimizer,
                     loss_scaler=loss_scaler, epoch=epoch, model_ema=model_ema)
         if data_loader_val is not None:
-            # TODO: Update here
             test_stats = validation_one_epoch(data_loader_val, model, device, criterion)
             print(f"Accuracy of the network on the {len(dataset_val)} val videos: {test_stats['acc1']:.1f}%")
             if max_accuracy < test_stats["acc1"]:
