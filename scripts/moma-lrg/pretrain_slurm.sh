@@ -5,17 +5,17 @@
 #SBATCH --cpus-per-task=32    # There are 24 CPU cores on V100 Cedar GPU nodes
 #SBATCH --mem=0               # Request the full memory of the node
 #SBATCH --time=3-23:59:00
-#SBATCH --account=def-mori
+#SBATCH --account=YOUR_ACCOUNT
 #SBATCH --output=log/slurm_output/slurm-%J.out
 #SBATCH --error=log/slurm_output/error_%J.out
 
 # Set the path to save checkpoints
-OUTPUT_DIR='/home/aabdujyo/scratch/Video-STLayout-Pretraining/checkpoints/'$1
+OUTPUT_DIR='checkpoints/'$1
 # path to Kinetics set (train.csv/val.csv/test.csv)
-LOG_DIR='/home/aabdujyo/scratch/Video-STLayout-Pretraining/log/'$1
+LOG_DIR='log/'$1
 # path to pretrain model
-VID_ENCODER_PATH='/home/aabdujyo/scratch/Video-STLayout-Pretraining/VideoMAE_pretrained_ckpts/checkpoint_ViT-B_SS_ep2400.pth'
-STLAYOUT_ENCODER_PATH='stlayout_encoder/saved_models/H4_L3_D256_LR0001v2/bbox2activity_best.pt'
+VID_ENCODER_PATH='VideoMAE_pretrained_ckpts/checkpoint_ViT-B_SS_ep2400.pth'
+STLAYOUT_ENCODER_PATH='stlayout_encoder/saved_models/H4_L3_D256_LR0001/bbox2activity_best.pt'
 
 # We add repeated_aug (--num_sample = 2) on Kinetics-400 here, 
 # which could better performance while need more time for fine-tuning
@@ -23,13 +23,11 @@ STLAYOUT_ENCODER_PATH='stlayout_encoder/saved_models/H4_L3_D256_LR0001v2/bbox2ac
 # batch_size can be adjusted according to number of GPUs
 # this script is for 32 GPUs (4 nodes x 8 GPUs)
 
-source /home/aabdujyo/scratch/Video-STLayout-Pretraining/VidMAE/bin/activate
-module load python/3.10
-module load scipy-stack/2023b
-module load cuda
+# source /path/to/your/venv/bin/activate
+# module load python/3.10
+# module load scipy-stack/2023b
+# module load cuda
 
-# cp /project/def-mori/aabdujyo/scratch_tmp/MOMA-LRG/sub_activity.tgz $SLURM_TMPDIR/
-# tar -xzf $SLURM_TMPDIR/sub_activity.tgz -C $SLURM_TMPDIR
 
 echo 'Starting to run the script!'
 

@@ -30,13 +30,13 @@ Trains on `<data_dir>/train.pt` and `<data_dir>/val.pt`. Each `.pt` is a dict wi
 
 The parent repo's two Stage-2 pipelines each consume a *different* encoder trained here:
 
-**Annotated boxes** (`H4_L3_D256_LR0001v2` — 4 heads, 3 layers, hidden 256, lr 1e-4):
+**Annotated boxes** (`H4_L3_D256_LR0001` — 4 heads, 3 layers, hidden 256, lr 1e-4):
 ```bash
 python main.py \
     --data_dir data \
     --num_heads 4 --num_layers 3 --hidden_dim 256 \
     --learning_rate 0.0001 --batch_size 32 \
-    --output_dir H4_L3_D256_LR0001v2
+    --output_dir H4_L3_D256_LR0001
 ```
 
 **Detected boxes** (`Det12hr_min10_H3_L2_D96_LR0001` — 3 heads, 2 layers, hidden 96):

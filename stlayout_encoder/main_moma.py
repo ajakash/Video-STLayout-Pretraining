@@ -135,7 +135,7 @@ if __name__ == '__main__':
     parser.add_argument('--check_val_epoch', type=int, default=1)
     parser.add_argument('--log_dir', type=str, default='',
                         help='base directory to save logs')
-    parser.add_argument('--data_dir', type=str, default='/home/aabdujyo/scratch/MOMA-LRG')
+    parser.add_argument('--data_dir', type=str, default='MOMA-LRG')
 
     args = parser.parse_args()
 

@@ -46,7 +46,7 @@ if __name__ == '__main__':
 
     parser.add_argument('--device', type=str, default=None)
     parser.add_argument('--batch_size', type=int, default=1)
-    parser.add_argument('--data_dir', type=str, default='/home/aabdujyo/scratch/MOMA-LRG')
+    parser.add_argument('--data_dir', type=str, default='MOMA-LRG')
 
     args = parser.parse_args()
 

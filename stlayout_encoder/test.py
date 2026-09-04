@@ -88,7 +88,7 @@ def main(args):
     #         # compute_loss(model, tgt, val_data, criterion, device, split='val')
     #         compute_loss(model, tgt, test_data, criterion, device, split='test')
 
-    # model = torch.load(f'saved_models/H4_L3_D256_LR0001v2/bbox2activity_best.pt').to(device)
+    # model = torch.load(f'saved_models/H4_L3_D256_LR0001/bbox2activity_best.pt').to(device)
     model = torch.load(f'saved_models/{args.model_name}/bbox2activity_best.pt').to(device)
     best_epoch_file = f'saved_models/{args.model_name}/best_epoch.txt'
     with open(best_epoch_file, 'r') as f:
@@ -110,7 +110,7 @@ if __name__ == '__main__':
                         help='path to the model to be loaded')
     parser.add_argument('--models_file', type=str, default='test_models.txt',
                         help='txt file with list of models in saved_models folder')
-    parser.add_argument('--model_name', type=str, default='H4_L3_D256_LR0001v2')
+    parser.add_argument('--model_name', type=str, default='H4_L3_D256_LR0001')
     parser.add_argument('--data_dir', type=str, default='data')
 
     args = parser.parse_args()
